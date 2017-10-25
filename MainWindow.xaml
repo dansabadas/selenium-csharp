@@ -6,7 +6,21 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <Button x:Name="button" Content="Test" HorizontalAlignment="Left" Margin="61,48,0,0" VerticalAlignment="Top" Width="75" Click="button_Click"/>
+        <Button x:Name="button" Content="Load Punch Times" HorizontalAlignment="Left" Margin="61,48,0,0" VerticalAlignment="Top" Width="108" Click="button_Click"/>
+        <Label x:Name="lbl1" Content="Start Time:" HorizontalAlignment="Left" Margin="195,24,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="labelStartTime" Content="..." HorizontalAlignment="Left" Margin="266,24,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="labelEndTime" Content="..." HorizontalAlignment="Left" Margin="266,63,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lbl2" Content="End Time:" HorizontalAlignment="Left" Margin="195,63,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="labelStartTime_Copy1" Content="Start Working Hour:" HorizontalAlignment="Left" Margin="195,94,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="labelStartTime_Copy2" Content="Polling Interval (min):" HorizontalAlignment="Left" Margin="195,120,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="labelStartTime_Copy" Content="Mandatory Office time (min):" HorizontalAlignment="Left" Margin="195,146,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="textBlockStartWorkingHour" HorizontalAlignment="Left" Height="23" Margin="311,96,0,0" TextWrapping="Wrap" Text="8" VerticalAlignment="Top" Width="32" />
+        <TextBox x:Name="textBlockPollingIntervalMinutes" HorizontalAlignment="Left" Height="23" Margin="322,123,0,0" TextWrapping="Wrap" Text="30" VerticalAlignment="Top" Width="32" />
+        <TextBox x:Name="textBlockOfficeTimeMinutes" HorizontalAlignment="Left" Height="23" Margin="358,148,0,0" TextWrapping="Wrap" Text="510" VerticalAlignment="Top" Width="32" />
+        <ComboBox x:Name="comboBox" HorizontalAlignment="Left" Margin="295,177,0,0" VerticalAlignment="Top" Width="120"/>
+        <Label x:Name="labelStartTime_Copy3" Content="Selenium Engine:" HorizontalAlignment="Left" Margin="195,173,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="minimizeButton" Content="Minimize" HorizontalAlignment="Left" Margin="61,89,0,0" VerticalAlignment="Top" Width="75" Click="button1_Click"/>
+        <Button x:Name="fastPunchButton" Content="Fast Punch In/Out" HorizontalAlignment="Left" Margin="61,124,0,0" VerticalAlignment="Top" Width="108" Click="fastPunchButton_Click" />
 
     </Grid>
 </Window>
