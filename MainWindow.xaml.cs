@@ -188,6 +188,10 @@ namespace selenium_csharp
         {
             labelStartTime.Content = _applicationPunchState.In.ToString("dd.MM.yyyy HH:mm");
             labelEndTime.Content = _applicationPunchState.Out.ToString("dd.MM.yyyy HH:mm");
+
+            var now = DateTime.Now;
+            var minutesPassed = (int)now.Subtract(_applicationPunchState.In).TotalMinutes;
+            labelRefreshInfo.Content = $"Refreshed at {now:dd.MM.yyyy HH:mm:ss} \n{minutesPassed} minutes passed since last punch-in";
         }
 
         private void ReadPunchTimes(dynamic punchPage)
