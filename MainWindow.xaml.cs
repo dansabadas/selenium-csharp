@@ -51,7 +51,7 @@ namespace selenium_csharp
             Loaded += (s, e) =>
             {
                 var punchPage = NavigateToPunchPageAndCollectUIControls();
-                ReadPunchTimes(punchPage);
+                LoadPunchTimesIntoApplicationState((IWebElement)punchPage.lblStart, (IWebElement)punchPage.lblEnd);
 
                 _timer = new Timer { Interval = _applicationPunchState.PollingIntervalMinutes * 60 * 1000, Enabled = true, AutoReset = true }; // fires every half-hour (or whatever time interval we set in UI)!
                 _timer.Elapsed += (s1, e1) => ApplyPunchingLogic();
@@ -131,14 +131,19 @@ namespace selenium_csharp
         private void LoadApplicationStateSettingsFromUI()
         {
             _applicationPunchState.PollingIntervalMinutes = int.Parse(textBlockPollingIntervalMinutes.Text);
-            _applicationPunchState.StartHour = int.Parse(textBlockStartWorkingHour.Text);
+            _applicationPunchState.StartWorkingHour = int.Parse(textBlockStartWorkingHour.Text);
             _applicationPunchState.TimeSpentAtOfficeMinutes = int.Parse(textBlockOfficeTimeMinutes.Text);
         }
 
         private bool ApplyPunchingLogic()
         {
             var now = DateTime.Now;
-            if (now.Hour < _applicationPunchState.StartHour)
+            if (now.DayOfWeek == DayOfWeek.Saturday || now.DayOfWeek == DayOfWeek.Sunday)
+            {
+                return false;
+            }
+
+            if (now.Hour < _applicationPunchState.StartWorkingHour)
             {
                 return false;
             }
@@ -180,11 +185,11 @@ namespace selenium_csharp
             //http://selenium-release.storage.googleapis.com/index.html?path=3.6/
 
             var punchPage = NavigateToPunchPageAndCollectUIControls();
-            ReadPunchTimes(punchPage);
-            BindToUI();
+            LoadPunchTimesIntoApplicationState((IWebElement)punchPage.lblStart, (IWebElement)punchPage.lblEnd);
+            BindApplicationStateToUI();
         }
 
-        private void BindToUI()
+        private void BindApplicationStateToUI()
         {
             labelStartTime.Content = _applicationPunchState.In.ToString("dd.MM.yyyy HH:mm");
             labelEndTime.Content = _applicationPunchState.Out.ToString("dd.MM.yyyy HH:mm");
@@ -194,10 +199,10 @@ namespace selenium_csharp
             labelRefreshInfo.Content = $"Refreshed at {now:dd.MM.yyyy HH:mm:ss} \n{minutesPassed} minutes passed since last punch-in";
         }
 
-        private void ReadPunchTimes(dynamic punchPage)
+        private void LoadPunchTimesIntoApplicationState(IWebElement lblStart, IWebElement lblEnd)
         {
-            _applicationPunchState.In = DateTime.ParseExact(((IWebElement)punchPage.lblStart).Text.Trim(), "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
-            _applicationPunchState.Out = DateTime.ParseExact(((IWebElement)punchPage.lblEnd).Text.Trim(), "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
+            _applicationPunchState.In = DateTime.ParseExact(lblStart.Text.Trim(), "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
+            _applicationPunchState.Out = DateTime.ParseExact(lblEnd.Text.Trim(), "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
         }
 
         private IWebDriver CreateInternetExplorerDriver()

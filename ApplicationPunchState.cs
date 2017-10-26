@@ -12,7 +12,7 @@ namespace selenium_csharp
         [DataMember]
         public DateTime Out { get; set; }
 
-        public int StartHour { get; set; }
+        public int StartWorkingHour { get; set; }
 
         public int PollingIntervalMinutes { get; set; }
 
