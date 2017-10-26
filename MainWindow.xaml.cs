@@ -58,9 +58,9 @@ namespace selenium_csharp
                 _timer.Elapsed += (s1, e1) => ApplyPunchingLogic();
             };
 
-            SystemEvents.SessionSwitch += (object o, SessionSwitchEventArgs essea) =>
+            SystemEvents.SessionSwitch += (s, e) =>
             {
-                if (essea.Reason == SessionSwitchReason.SessionUnlock)  // this is useful first thing in the morning at computer login (or better said unlock)
+                if (e.Reason == SessionSwitchReason.SessionUnlock)  // this is useful first thing in the morning at computer login (or better said unlock)
                 {
                     ApplyPunchingLogic();
                 }
