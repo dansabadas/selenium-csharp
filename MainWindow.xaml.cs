@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.IE;
@@ -55,6 +56,14 @@ namespace selenium_csharp
 
                 _timer = new Timer { Interval = _applicationPunchState.PollingIntervalMinutes * 60 * 1000, Enabled = true, AutoReset = true }; // fires every half-hour (or whatever time interval we set in UI)!
                 _timer.Elapsed += (s1, e1) => ApplyPunchingLogic();
+            };
+
+            SystemEvents.SessionSwitch += (object o, SessionSwitchEventArgs essea) =>
+            {
+                if (essea.Reason == SessionSwitchReason.SessionUnlock)  // this is useful first thing in the morning at computer login (or better said unlock)
+                {
+                    ApplyPunchingLogic();
+                }
             };
         }
 
