@@ -22,7 +22,9 @@ namespace selenium_csharp
     /// </summary>
     public partial class MainWindow : Window
     {
-        NotifyIcon _notifyIcon = new NotifyIcon();
+        private static readonly object __syncLock = new object();
+
+        readonly NotifyIcon _notifyIcon = new NotifyIcon();
 
         private ApplicationPunchState _applicationPunchState;
         private IWebDriver _webDriver;
@@ -55,7 +57,13 @@ namespace selenium_csharp
                 LoadPunchTimesIntoApplicationState((IWebElement)punchPage.lblStart, (IWebElement)punchPage.lblEnd);
 
                 _timer = new Timer { Interval = _applicationPunchState.PollingIntervalMinutes * 60 * 1000, Enabled = true, AutoReset = true }; // fires every half-hour (or whatever time interval we set in UI)!
-                _timer.Elapsed += (s1, e1) => ApplyPunchingLogic();
+                _timer.Elapsed += (s1, e1) =>
+                {
+                    lock (__syncLock)
+                    {
+                        ApplyPunchingLogic();
+                    }
+                };
             };
 
             SystemEvents.SessionSwitch += (s, e) =>
@@ -63,6 +71,7 @@ namespace selenium_csharp
                 if (e.Reason == SessionSwitchReason.SessionUnlock)  // this is useful first thing in the morning at computer login (or better said unlock)
                 {
                     ApplyPunchingLogic();
+                    BindApplicationStateToUI();
                 }
             };
         }
@@ -81,7 +90,7 @@ namespace selenium_csharp
 
         private void PopulateComboBox()
         {
-            List<string> data = new List<string> {"Chrome", "PhantomJS"};
+            var data = new List<string> {"Chrome", "PhantomJS"};
             comboBox.ItemsSource = data;
             comboBox.SelectedIndex = 1;
         }
@@ -97,13 +106,19 @@ namespace selenium_csharp
             switch (comboBox.SelectedItem as string)
             {
                 case "Chrome":
-                    _webDriver = CreateChromeDriver();
+                    _webDriver = new ChromeDriver();
                     break;
                 case "PhantomJS":
-                    _webDriver = CreatePhantomJSDriver();
+                    _webDriver = new PhantomJSDriver();
                     break;
                 case "InternetExplorer":
-                    _webDriver = CreateInternetExplorerDriver();
+                    var ieOptions = new InternetExplorerOptions
+                    {
+                        IgnoreZoomLevel = true,
+                        IntroduceInstabilityByIgnoringProtectedModeSettings = true
+                    };
+
+                    _webDriver = new InternetExplorerDriver(ieOptions);
                     break;
             }
         }
@@ -212,27 +227,6 @@ namespace selenium_csharp
         {
             _applicationPunchState.In = DateTime.ParseExact(lblStart.Text.Trim(), "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
             _applicationPunchState.Out = DateTime.ParseExact(lblEnd.Text.Trim(), "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
-        }
-
-        private IWebDriver CreateInternetExplorerDriver()
-        {
-            var ieOptions = new InternetExplorerOptions
-            {
-                IgnoreZoomLevel = true,
-                IntroduceInstabilityByIgnoringProtectedModeSettings = true
-            };
-
-            return new InternetExplorerDriver(ieOptions);
-        }
-
-        private static IWebDriver CreateChromeDriver()
-        {
-            return new ChromeDriver();
-        }
-
-        private static IWebDriver CreatePhantomJSDriver()
-        {
-            return new PhantomJSDriver();
         }
 
         private void FillCredentials()
