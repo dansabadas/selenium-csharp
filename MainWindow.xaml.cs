@@ -289,7 +289,7 @@ namespace selenium_csharp
             var punchingApplied = ApplyPunchingLogic();
             if (!punchingApplied)
             {
-                System.Windows.MessageBox.Show("It is not yet time to manually punch! \nMaybe change your settings!");
+                System.Windows.MessageBox.Show("It is not yet time to manually punch! \nMaybe change your settings!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
     }
