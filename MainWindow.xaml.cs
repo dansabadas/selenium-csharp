@@ -61,7 +61,7 @@ namespace selenium_csharp
                 {
                     lock (__syncLock)
                     {
-                        ApplyPunchingLogic();
+                        PunchAndRefreshApplicationState();
                     }
 
                     BindApplicationStateToUI();
@@ -74,12 +74,19 @@ namespace selenium_csharp
                 {
                     lock (__syncLock)
                     {
-                        ApplyPunchingLogic();
+                        PunchAndRefreshApplicationState();
                     }
 
                     BindApplicationStateToUI();
-                }
+               }
             };
+        }
+
+        private void PunchAndRefreshApplicationState()
+        {
+            ApplyPunchingLogic();
+            var punchPage = NavigateToPunchPageAndCollectUIControls();
+            LoadPunchTimesIntoApplicationState((IWebElement)punchPage.lblStart, (IWebElement)punchPage.lblEnd);
         }
 
         private void InitializeUIControlsDealingWithApplicationState()
