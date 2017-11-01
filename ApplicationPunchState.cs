@@ -16,6 +16,6 @@ namespace selenium_csharp
 
         public int PollingIntervalMinutes { get; set; }
 
-        public int TimeSpentAtOfficeMinutes { get; set; }
+        public int MandatoryTimeSpentAtOfficeMinutes { get; set; }
     }
 }

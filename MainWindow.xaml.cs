@@ -169,7 +169,7 @@ namespace selenium_csharp
         {
             _applicationPunchState.PollingIntervalMinutes = int.Parse(textBlockPollingIntervalMinutes.Text);
             _applicationPunchState.StartWorkingHour = int.Parse(textBlockStartWorkingHour.Text);
-            _applicationPunchState.TimeSpentAtOfficeMinutes = int.Parse(textBlockOfficeTimeMinutes.Text);
+            _applicationPunchState.MandatoryTimeSpentAtOfficeMinutes = int.Parse(textBlockOfficeTimeMinutes.Text);
         }
 
         private bool ApplyPunchingLogic()
@@ -192,7 +192,7 @@ namespace selenium_csharp
                 return true;
             }
 
-            if (now.Subtract(_applicationPunchState.In).TotalMinutes > _applicationPunchState.TimeSpentAtOfficeMinutes &&   // more than 510' = 8hr30min passed and the user didn't play randomly with the online-punch
+            if (now.Subtract(_applicationPunchState.In).TotalMinutes > _applicationPunchState.MandatoryTimeSpentAtOfficeMinutes &&   // more than 510' = 8hr30min passed and the user didn't play randomly with the online-punch
                 _applicationPunchState.In > _applicationPunchState.Out)    
             {
                 var punchPage = NavigateToPunchPageAndCollectUIControls();
@@ -232,21 +232,21 @@ namespace selenium_csharp
             var minutesPassed = (int)now.Subtract(_applicationPunchState.In).TotalMinutes;
             Dispatcher.Invoke(() =>
             {
-                labelStartTime.Content = _applicationPunchState.In.ToString("dd.MM.yyyy HH:mm");
-                labelEndTime.Content = _applicationPunchState.Out.ToString("dd.MM.yyyy HH:mm");
+                labelStartTime.Content = _applicationPunchState.In.ToString("d.MM.yyyy HH:mm");
+                labelEndTime.Content = _applicationPunchState.Out.ToString("d.MM.yyyy HH:mm");
                 labelRefreshInfo.Content = $"Refreshed at {now:dd.MM.yyyy HH:mm:ss} \n{minutesPassed} minutes passed since last punch-in";
             });
         }
 
         private void LoadPunchTimesIntoApplicationState(IWebElement lblStart, IWebElement lblEnd)
         {
-            _applicationPunchState.In = DateTime.ParseExact(lblStart.Text.Trim(), "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
-            _applicationPunchState.Out = DateTime.ParseExact(lblEnd.Text.Trim(), "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
+            _applicationPunchState.In = DateTime.ParseExact(lblStart.Text.Trim(), "d.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
+            _applicationPunchState.Out = DateTime.ParseExact(lblEnd.Text.Trim(), "d.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
         }
 
         private void FillCredentials()
         {
-            _webDriver.FindElement(By.Id("txtUser")).SendKeys(ConfigurationManager.AppSettings["userName"]);
+            _webDriver.FindElement(By.Id("txtUser")).SendKeys(Environment.UserName);
             _webDriver.FindElement(By.Id("txtPassword")).SendKeys(ConfigurationManager.AppSettings["password"]);
         }
 
